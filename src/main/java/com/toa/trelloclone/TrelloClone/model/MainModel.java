@@ -12,41 +12,33 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-
-
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(
-		value = {"dateCreated", "lastUpdated"},
-		allowGetters = true
-		)
-public class MainModel {
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="date_created", updatable = false)
+public abstract class MainModel {
+	@Column(updatable = false)
 	@CreatedDate
-	private Date dateCreated;
-	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="last_updated")
+	private Date date_created;
+	
 	@LastModifiedDate
-	private Date lastUpdated;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date last_updated;
 
-	public Date getDateCreated() {
-		return dateCreated;
+	public Date getDate_created() {
+		return date_created;
 	}
 
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
+	public void setDate_created(Date date_created) {
+		this.date_created = date_created;
 	}
 
-	public Date getLastUpdated() {
-		return lastUpdated;
+	public Date getLast_updated() {
+		return last_updated;
 	}
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
+	public void setLast_updated(Date last_updated) {
+		this.last_updated = last_updated;
 	}
+	
+
 }

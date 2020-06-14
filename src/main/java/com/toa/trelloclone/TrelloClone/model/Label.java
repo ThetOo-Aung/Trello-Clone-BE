@@ -7,7 +7,7 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
+@Entity(name = "label")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Label extends MainModel {
 

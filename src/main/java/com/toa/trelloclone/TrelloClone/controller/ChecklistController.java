@@ -2,6 +2,8 @@ package com.toa.trelloclone.TrelloClone.controller;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,53 +16,55 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.toa.trelloclone.TrelloClone.model.Card;
 import com.toa.trelloclone.TrelloClone.model.Checklist;
+import com.toa.trelloclone.TrelloClone.model.MainModel;
+import com.toa.trelloclone.TrelloClone.repository.CardRepository;
 import com.toa.trelloclone.TrelloClone.repository.ChecklistRepository;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/checklist")
-public class ChecklistController {
+@RequestMapping(path = "/checklist")
+@Transactional
+public class ChecklistController extends MainModel{
 	
 	@Autowired
-	ChecklistRepository checklistRepository;
+	private ChecklistRepository checklistRepository;
+	
+	@Autowired
+	private CardRepository cardRepository;
 	
 	
 	@GetMapping
-	public List<Checklist> getAll() {
-		return checklistRepository.findAll();	
+	public List<Checklist> get() {
+		return checklistRepository.findAll();
 	}
-	@GetMapping("/{cardId}/{id}")
-	public Checklist getbyId(@PathVariable Long id) {
+	
+	@GetMapping(value = "{id}")
+	public Checklist getById(@PathVariable Long id) {
 		return checklistRepository.getOne(id);
 	}
 	
 	@PostMapping
-	public Checklist save(@RequestBody Checklist checklist) {
+	public Checklist create(@RequestBody Checklist checklist) {
 		return checklistRepository.saveAndFlush(checklist);
 	}
-	
-	
-	@RequestMapping(method = RequestMethod.PUT)
-	public Checklist update(@RequestBody Checklist checklist) {
-		Checklist oldChecklist = checklistRepository.getOne(checklist.getId());
-		BeanUtils.copyProperties(checklist, oldChecklist, "id", "cardId", "position", "title");
-		return checklistRepository.saveAndFlush(oldChecklist);
+
+	@RequestMapping(value = "{id}", method = RequestMethod.PUT)
+	public Checklist update(@PathVariable Long id, @RequestBody Checklist checklist) {
+		Checklist existingCl = checklistRepository.getOne(id);
+		BeanUtils.copyProperties(checklist, existingCl, "id", "card_id");
+		return checklistRepository.saveAndFlush(existingCl);
 	}
-	@RequestMapping(value = "{id}",method = RequestMethod.DELETE)
-	public boolean delete(@PathVariable Long id) {
+	
+	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable Long id) {
 		checklistRepository.deleteById(id);
-		return true;
 	}
 	
-	@GetMapping("{cardId}")
-	public List<Checklist> getbyCardId(@PathVariable Long cardId){
-		return checklistRepository.findByCardId(cardId);
-	}
-	
-	@PostMapping("{cardId}")
-	public List<Checklist> saveAll(@RequestBody List<Checklist> checklists){
-		return checklistRepository.saveAll(checklists);
-	}
-	
+//	@RequestMapping(value = "{card_id}/removeAll",method = RequestMethod.DELETE)
+//	public void removeChecklsit(@PathVariable Long card_id) {
+//		List<Checklist> checklists = checklistRepository.findByCardId(card_id);
+//	}
+//	
 }

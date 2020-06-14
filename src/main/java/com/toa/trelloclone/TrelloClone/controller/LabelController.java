@@ -40,23 +40,17 @@ public class LabelController {
 	public Label save(@RequestBody Label label) {
 		return labelRepository.saveAndFlush(label);
 	}
-	@RequestMapping(method = RequestMethod.PUT)
-	public Label update(@RequestBody Label label) {
-		Label oldLabel = labelRepository.getOne(label.getId());
-		BeanUtils.copyProperties(label, oldLabel, "id");
-		return labelRepository.saveAndFlush(oldLabel);
+	
+	
+	@RequestMapping(value = "{id}", method = RequestMethod.PUT)
+	public Label update(@PathVariable Long id, @RequestBody Label label) {
+		Label existingLabel = labelRepository.getOne(id);
+		BeanUtils.copyProperties(label, existingLabel, "id");
+		return labelRepository.saveAndFlush(existingLabel);
 	}
 	
-	
-
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public boolean delete(@PathVariable Long id) {
-		try {
-			labelRepository.deleteById(id);
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+	public void delete(@PathVariable Long id) {
+		labelRepository.deleteById(id);
 	}
 }

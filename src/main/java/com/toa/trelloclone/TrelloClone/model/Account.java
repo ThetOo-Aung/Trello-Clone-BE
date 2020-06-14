@@ -1,23 +1,26 @@
 package com.toa.trelloclone.TrelloClone.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
+@Entity(name = "account")
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Account extends MainModel{
 	
-	@Id
+	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
+	@Id
 	private String username;
 	private String name;
 	private String email;
@@ -31,12 +34,24 @@ public class Account extends MainModel{
 	public Account() {
 		
 	}
+	@ManyToMany(mappedBy = "members")
+	@JsonIgnoreProperties({"list", "members", "labels", "checklists"})
+	private List<Card> cards;
 
-	public int getId() {
+
+	public List<Card> getCards() {
+		return cards;
+	}
+
+	public void setCards(List<Card> cards) {
+		this.cards = cards;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -22,7 +22,7 @@ import com.toa.trelloclone.TrelloClone.repository.AccountRepository;
 public class AccountController {
 	
 	@Autowired
-	AccountRepository accountRepository;
+	private AccountRepository accountRepository;
 	
 	@GetMapping
 	public List<Account> getAll() {
@@ -30,20 +30,20 @@ public class AccountController {
 	}
 	
 	@GetMapping("{username}")
-	public Account getById(@PathVariable String username) {
+	public Account getByUserName(@PathVariable String username) {
 		return accountRepository.getOne(username);
 	}
 	
-	@PostMapping()
-	public Account save(@RequestBody Account account) {
+	@PostMapping
+	public Account create(@RequestBody Account account) {
 		return accountRepository.saveAndFlush(account);
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT)
-	public Account update(@RequestBody Account account) {
-		Account oldAccount = accountRepository.getOne(account.getUsername());
-		BeanUtils.copyProperties(account, oldAccount, "id", "username", "verified");
-		return accountRepository.saveAndFlush(oldAccount);
+	@RequestMapping(value = "{username}", method = RequestMethod.PUT)
+	public Account update(@PathVariable String username, @RequestBody Account account) {
+		Account existingAccount = accountRepository.getOne(username);
+		BeanUtils.copyProperties(account, existingAccount, "username", "id");
+		return accountRepository.saveAndFlush(existingAccount);
 	}
 	
 	@RequestMapping(value = "{username}", method = RequestMethod.DELETE)

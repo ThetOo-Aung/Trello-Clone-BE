@@ -1,6 +1,7 @@
 package com.toa.trelloclone.TrelloClone.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,54 +15,59 @@ import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
+@Entity(name = "List")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class List extends MainModel {
+public class MyList extends MainModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String title;
 	private Integer position;
-	private Integer status = 1;
+	private Byte status;
 	
-	@OneToMany(cascade = CascadeType.REMOVE,
-			fetch = FetchType.LAZY,
-			mappedBy = "list")
-	@OrderBy("position asc")
-	
-	private Set<Card> cards = new HashSet<Card>();
-	
+	@OneToMany(mappedBy = "list")
+	@JsonIgnoreProperties("list")
+	private List<Card> cards;
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getTitle() {
 		return title;
 	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
 	public Integer getPosition() {
 		return position;
 	}
+
 	public void setPosition(Integer position) {
 		this.position = position;
 	}
-	public Integer getStatus() {
+
+	public Byte getStatus() {
 		return status;
 	}
-	public void setStatus(Integer status) {
+
+	public void setStatus(Byte status) {
 		this.status = status;
 	}
-	public Set<Card> getCards() {
+
+	public List<Card> getCards() {
 		return cards;
 	}
-	public void setCards(Set<Card> cards) {
+
+	public void setCards(List<Card> cards) {
 		this.cards = cards;
 	}
-	
-	
+
 }

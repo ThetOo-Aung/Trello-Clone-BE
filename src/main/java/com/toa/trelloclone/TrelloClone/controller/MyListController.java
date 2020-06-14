@@ -12,36 +12,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.toa.trelloclone.TrelloClone.model.List;
-import com.toa.trelloclone.TrelloClone.repository.ListRepository;
-
+import com.toa.trelloclone.TrelloClone.model.MyList;
+import com.toa.trelloclone.TrelloClone.repository.MyListRepository;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/list")
-public class ListController {
+public class MyListController {
 	@Autowired
-	ListRepository listRepository;
+	MyListRepository listRepository;
 	
 	
 	@GetMapping
-	public java.util.List<List> getAll() {
+	public java.util.List<MyList> getAll() {
 		return listRepository.findAll();
 	}
 	
 	@GetMapping("{id}")
-	public List getbyId(@PathVariable Long id){
+	public MyList getbyId(@PathVariable Long id){
 		return listRepository.getOne(id);
 	}
 	
+	
 	@PostMapping
-	public List save(@RequestBody List list) {
+	public MyList create(@RequestBody MyList list) {
 		return listRepository.saveAndFlush(list);
 	}
-	@RequestMapping(method = RequestMethod.PUT)
-	public List update(@RequestBody List list) {
-		List oldList = listRepository.getOne(list.getId());
-		BeanUtils.copyProperties(list, oldList, "id","status","position");
-		return listRepository.saveAndFlush(oldList);
+	
+	
+	@RequestMapping(value = "{id}",method = RequestMethod.PUT)
+	public MyList update(@PathVariable Long id,@RequestBody MyList list) {
+		MyList existingList = listRepository.getOne(id);
+		BeanUtils.copyProperties(list, existingList, "id","date_created");
+		return listRepository.saveAndFlush(existingList);
+	}
+	
+	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable Long id) {
+		listRepository.deleteById(id);
 	}
 }
